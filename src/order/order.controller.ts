@@ -1,10 +1,10 @@
 import { Controller, Inject } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { OrderService } from './service/order.service';
+import { OrderService } from './order.service';
 import { ORDER_SERVICE_NAME, CreateOrderResponse } from './proto/order.pb';
 import { CreateOrderRequestDto } from './order.dto';
 
-@Controller('order')
+@Controller()
 export class OrderController {
   @Inject(OrderService)
   private readonly service: OrderService;

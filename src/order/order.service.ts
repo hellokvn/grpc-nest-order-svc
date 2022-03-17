@@ -2,10 +2,10 @@ import { HttpStatus, Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Repository } from 'typeorm';
+import { firstValueFrom } from 'rxjs';
 import { Order } from './order.entity';
 import { FindOneResponse, DecreaseStockResponse, ProductServiceClient, PRODUCT_SERVICE_NAME } from './proto/product.pb';
 import { CreateOrderRequest, CreateOrderResponse } from './proto/order.pb';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class OrderService implements OnModuleInit {
