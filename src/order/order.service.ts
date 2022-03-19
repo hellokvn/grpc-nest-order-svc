@@ -30,12 +30,6 @@ export class OrderService implements OnModuleInit {
       return { id: null, error: ['Stock too less'], status: HttpStatus.CONFLICT };
     }
 
-    const decreasedStockData: DecreaseStockResponse = await firstValueFrom(this.productSvc.decreaseStock({ id: data.productId }));
-
-    if (decreasedStockData.status === HttpStatus.CONFLICT) {
-      return { id: null, error: ['Stock too less'], status: HttpStatus.CONFLICT };
-    }
-
     const order: Order = new Order();
 
     order.price = product.data.price;
@@ -43,6 +37,17 @@ export class OrderService implements OnModuleInit {
     order.userId = data.userId;
 
     await this.repository.save(order);
+
+    const decreasedStockData: DecreaseStockResponse = await firstValueFrom(
+      this.productSvc.decreaseStock({ id: data.productId, orderId: order.id }),
+    );
+
+    if (decreasedStockData.status === HttpStatus.CONFLICT) {
+      // deleting order if decreaseStock fails
+      await this.repository.delete(order);
+
+      return { id: null, error: decreasedStockData.error, status: HttpStatus.CONFLICT };
+    }
 
     return { id: order.id, error: null, status: HttpStatus.OK };
   }
